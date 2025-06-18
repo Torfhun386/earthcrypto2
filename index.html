@@ -655,9 +655,11 @@ async function enrichWithPrices(data) {
 
 async function refreshPrices() {
   console.log('refreshPrices called');
-  for (let row of allData) {
+  // Debug log รายชื่อ contract ที่จะอัปเดตราคา
+  console.log('refreshPrices: contracts =', fetchDataForType(currentType).map(r => r.contract));
+  for (let row of fetchDataForType(currentType)) {
     try {
-      if (!row.contract) continue; // <--- เพิ่มบรรทัดนี้
+      if (!row.contract) continue;
       const url = `/api/dexscreener?contract=${row.contract}`;
       const res = await fetch(url);
       const json = await res.json();
@@ -665,11 +667,12 @@ async function refreshPrices() {
       if (!info) continue;
 
       const newPrice = parseFloat(info.priceUsd);
+      // ไม่จำเป็นต้องเช็ค tr = document.getElementById(...) ซ้ำซ้อน เพราะ filter แล้ว
       const tr = document.getElementById(safeId(row.contract));
       if (!tr) {
-      console.warn('ไม่พบ tr สำหรับ contract:', row.contract, 'ใช้ id:', safeId(row.contract));
-      continue;
-    }
+        console.warn('ไม่พบ tr สำหรับ contract:', row.contract, 'ใช้ id:', safeId(row.contract));
+        continue;
+      }
 
       // ใช้ข้อมูล icon/symbol เดิมจาก allData
       const entry = currentType === 'high' ? row.highEntry : currentType === 'low' ? row.lowEntry : row.totalEntry;
