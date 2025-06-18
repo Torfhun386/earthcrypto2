@@ -644,6 +644,7 @@ async function enrichWithPrices(data) {
 }
 
 async function refreshPrices() {
+  console.log('refreshPrices called');
   for (let row of allData) {
     try {
       if (!row.contract) continue; // <--- เพิ่มบรรทัดนี้
@@ -703,12 +704,6 @@ async function refreshPrices() {
           console.log('Total items:', allData.filter(d => d.totalInv > 0).map(d => d.name));
 
           allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
-          
-
-      document.getElementById('portfolioSelect').addEventListener('change', e => {
-        currentType = e.target.value;
-        renderRows(allData, currentType);
-      });
 
       setInterval(refreshPrices, 10000);  // ⬅️ ปิดฟังก์ชัน main ตรงนี้
     } // ✅ ปิด main
